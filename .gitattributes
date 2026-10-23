@@ -1,0 +1,3 @@
+* text=auto
+# cmd.exe is unreliable with LF-only batch files (labels, goto), whatever the user's autocrlf is.
+*.bat text eol=crlf

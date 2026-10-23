@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Речепись</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,700&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand-block">
+        <p class="eyebrow">запись · нарезка · расшифровка</p>
+        <h1 class="brand">Речепись</h1>
+      </div>
+      <div id="ctxInfo" class="ctx-info muted">Запись не выбрана</div>
+      <div class="top-actions">
+        <div id="providerPills" class="provider-pills"></div>
+        <button id="settingsBtn" type="button" class="btn secondary">Настройки</button>
+      </div>
+    </header>
+
+    <div id="shell" class="shell">
+      <aside class="library panel" aria-label="Записи">
+        <div class="panel-head">
+          <h2>Записи</h2>
+          <span id="libCount" class="mono muted"></span>
+        </div>
+        <form id="newForm" class="lib-new">
+          <input id="newTitle" type="text" maxlength="200" placeholder="Тема новой записи" autocomplete="off" />
+          <button class="btn primary" type="submit" title="Создать запись (Enter)">+</button>
+        </form>
+        <input id="libFilter" class="lib-filter" type="search" placeholder="Поиск по названию и тексту" autocomplete="off" />
+        <div id="libList" class="lib-list"></div>
+      </aside>
+
+      <main class="workspace" id="workspace">
+        <section id="emptyState" class="panel empty-state">
+          <h2>Выберите запись или создайте новую</h2>
+          <p>
+            <b>Запись</b> — это тема. В ней можно говорить много раз: каждое нажатие «Начать сессию» создаёт <b>сессию</b>, а
+            программа сама режет её по паузам на <b>сегменты</b>, чистит звук и отправляет их на расшифровку.
+          </p>
+        </section>
+
+        <div id="recView" class="hidden">
+          <section class="rec-head" style="margin-bottom: 0.9rem">
+            <div class="grow">
+              <p class="eyebrow">запись</p>
+              <h2 id="recTitle" class="rec-title" title="Двойной щелчок — переименовать"></h2>
+            </div>
+            <div class="row">
+              <button id="copyBtn" type="button" class="btn secondary">Копировать текст</button>
+              <button id="folderBtn" type="button" class="btn ghost">Папка</button>
+            </div>
+          </section>
+
+          <section id="recorder" class="panel recorder" aria-label="Запись звука" style="margin-bottom: 0.9rem">
+            <div class="rec-main">
+              <button id="recBtn" type="button" class="rec-btn"><span class="glyph"></span><span id="recBtnLabel">Начать сессию</span></button>
+              <div id="timer" class="timer">00:00</div>
+              <div class="meter">
+                <div class="meter-track">
+                  <div id="meterFill" class="meter-fill"></div>
+                  <div id="markFloor" class="meter-mark floor hidden"></div>
+                  <div id="markDip" class="meter-mark dip hidden"></div>
+                </div>
+                <div class="meter-meta">
+                  <span id="meterState" class="speech-dot"><span class="dot"></span><span id="meterText">микрофон выключен</span></span>
+                  <span id="meterLegend" class="legend hidden"><i style="background: var(--info)"></i>шум комнаты <i style="background: var(--range); margin-left: 0.6rem"></i>граница паузы</span>
+                  <span id="liveCount" class="mono"></span>
+                </div>
+              </div>
+            </div>
+            <div id="recNotice"></div>
+            <div class="rec-options">
+              <div class="opt wide">
+                <label class="lbl">Куда отправлять сегменты</label>
+                <div id="targetCtl" class="seg-ctl"></div>
+                <div id="targetHint" class="hint-line"></div>
+              </div>
+              <div class="opt">
+                <label class="lbl" for="slicingPreset">Нарезка на сегменты</label>
+                <select id="slicingPreset"></select>
+                <div id="slicingHint" class="hint-line"></div>
+              </div>
+              <div class="opt">
+                <label class="lbl" for="processingPreset">Обработка звука</label>
+                <select id="processingPreset"></select>
+                <div id="processingHint" class="hint-line"></div>
+              </div>
+              <div class="opt">
+                <label class="lbl" for="micSelect">Микрофон</label>
+                <select id="micSelect"></select>
+                <div class="hint-line"><span class="link" id="moreSettings">Все настройки…</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel" id="transcriptPanel" style="margin-bottom: 0.9rem">
+            <div class="panel-head">
+              <h2>Текст записи</h2>
+              <div id="viewCtl" class="seg-ctl" title="Какой модели текст показывать"></div>
+            </div>
+            <pre id="transcript" class="transcript-body empty">Текст появится, когда первые сегменты будут расшифрованы.</pre>
+          </section>
+
+          <section id="sessions" class="sessions" aria-label="Сессии"></section>
+        </div>
+      </main>
+
+      <aside id="inspector" class="inspector panel hidden" aria-label="Сегмент"></aside>
+    </div>
+
+    <div id="scrim" class="scrim hidden"></div>
+    <aside id="drawer" class="drawer hidden" aria-label="Настройки"></aside>
+    <div id="modal" class="modal hidden"></div>
+    <div id="modelSetup" class="modal hidden"></div>
+
+    <div id="overlay" class="overlay hidden">
+      <div class="overlay-card">
+        <p id="overlayText">Загрузка…</p>
+        <div class="progress"><span id="overlayBar"></span></div>
+      </div>
+    </div>
+    <div id="status" class="status hidden"></div>
+
+    <script type="module" src="/static/js/app.js"></script>
+  </body>
+</html>

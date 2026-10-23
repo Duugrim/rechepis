@@ -1,0 +1,28 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Everything the program creates while it runs: private by definition, never published.
+config.json
+recordings/*
+!recordings/.gitkeep
+models/
+*.wav
+*.pcm
+
+# Sources of the previous (v1) version kept next to the project for reference.
+.legacy-v1/
+
+# Output of release/build_release.py (downloads, staging folder, the finished archive).
+build/
+dist/
+
+.env
+.claude/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
